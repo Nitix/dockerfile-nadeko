@@ -14,7 +14,7 @@ RUN apt-get dist-upgrade -y
 RUN echo "Installing Git..."
 RUN apt-get install git -y
 RUN echo "Installing .NET Core..."
-RUN apt-get install dotnet-sdk-2.0.2 -y
+RUN apt-get install dotnet-sdk-2.1 -y
 RUN echo "Installing prerequisites..."
 RUN apt-get install libopus0 opus-tools libopus-dev libsodium-dev ffmpeg tmux python python3-pip redis-server -y
 RUN curl -sL  https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
