@@ -2,5 +2,5 @@
 
 redis-server --daemonize yes
 
-cd NadekoBot/src/NadekoBot
+cd nadekobot/src/NadekoBot
 dotnet run --configuration Release
