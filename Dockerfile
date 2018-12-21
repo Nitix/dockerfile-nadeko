@@ -20,7 +20,7 @@ RUN apt-get install libopus0 opus-tools libopus-dev libsodium-dev ffmpeg tmux py
 RUN curl -sL  https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
 RUN chmod a+rx /usr/local/bin/youtube-dl
 
-RUN git clone -b 1.9 --recursive --depth 1 https://github.com/Kwoth/NadekoBot.git
+RUN git clone -b 1.9 --recursive --depth 1 https://gitlab.com/Kwoth/nadekobot.git
 
 RUN cd NadekoBot && dotnet restore
 RUN cd NadekoBot && dotnet build --configuration Release
