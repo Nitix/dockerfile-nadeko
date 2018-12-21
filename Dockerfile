@@ -22,8 +22,8 @@ RUN chmod a+rx /usr/local/bin/youtube-dl
 
 RUN git clone -b 1.9 --recursive --depth 1 https://gitlab.com/Kwoth/nadekobot.git
 
-RUN cd NadekoBot && dotnet restore
-RUN cd NadekoBot && dotnet build --configuration Release
+RUN cd nadekobot && dotnet restore
+RUN cd nadekobot && dotnet build --configuration Release
 
 ADD run.sh /opt/
 
