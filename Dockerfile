@@ -1,8 +1,8 @@
-FROM microsoft/dotnet:2.1-sdk-alpine AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine AS build
 
-COPY . /nadekoBot
+RUN git clone https://gitlab.com/Kwoth/nadekobot.git
 
-WORKDIR /nadekoBot/src/NadekoBot
+WORKDIR /nadekobot/src/NadekoBot
 RUN set -ex; \
     dotnet restore; \
     dotnet build -c Release; \
@@ -14,7 +14,7 @@ RUN set -ex; \
     find . -type f -exec chmod -x {} \;; \
     rm -R runtimes/win* runtimes/osx* runtimes/linux-*
 
-FROM microsoft/dotnet:2.1-runtime-alpine AS runtime
+FROM mcr.microsoft.com/dotnet/core/runtime:3.1-alpine AS runtime
 WORKDIR /app
 COPY --from=build /app /app
 RUN set -ex; \
