@@ -16,8 +16,8 @@ WORKDIR /app
 RUN set -ex; \
     rm libopus.so libsodium.dll libsodium.so opus.dll; \
     find . -type f -exec chmod -x {} \;; \
-    rm -R runtimes/linux-*
-
+     rm -R runtimes/win* runtimes/osx*
+     
 FROM mcr.microsoft.com/dotnet/core/runtime:3.1-alpine AS runtime
 WORKDIR /app
 COPY --from=build /app /app
