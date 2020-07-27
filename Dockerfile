@@ -9,7 +9,7 @@ COPY --from=git /nadekobot /nadekobot
 WORKDIR /nadekobot/src/NadekoBot
 RUN set -ex; \
     dotnet restore; \
-    dotnet build -c Release; \
+    dotnet build -c Release -o /build/ ; \
     dotnet publish -c Release -o /app
 
 WORKDIR /app
