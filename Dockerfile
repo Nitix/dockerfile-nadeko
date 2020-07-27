@@ -1,10 +1,10 @@
 FROM alpine/git AS git
 
-RUN git clone https://gitlab.com/Kwoth/nadekobot.git
+RUN git clone https://gitlab.com/Kwoth/nadekobot.git /nadekobot/
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine AS build
 
-COPY --from=git /git/nadekobot /nadekobot
+COPY --from=git /nadekobot /nadekobot
 
 WORKDIR /nadekobot/src/NadekoBot
 RUN set -ex; \
