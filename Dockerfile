@@ -1,30 +1,44 @@
-FROM phusion/baseimage:latest
+FROM microsoft/dotnet:2.1-sdk-alpine AS build
 
-WORKDIR /opt/
+COPY . /nadekoBot
 
-RUN add-apt-repository ppa:jonathonf/ffmpeg-3 -y
-RUN apt-get update
-RUN apt-get install software-properties-common apt-transport-https curl -y
-RUN curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-RUN mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
-RUN sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-xenial-prod xenial main" > /etc/apt/sources.list.d/dotnetdev.list'
-RUN apt-get update
-RUN apt-get upgrade -y
-RUN apt-get dist-upgrade -y
-RUN echo "Installing Git..."
-RUN apt-get install git -y
-RUN echo "Installing .NET Core..."
-RUN apt-get install dotnet-sdk-2.1 -y
-RUN echo "Installing prerequisites..."
-RUN apt-get install libopus0 opus-tools libopus-dev libsodium-dev ffmpeg tmux python python3-pip redis-server -y
-RUN curl -sL  https://yt-dl.org/downloads/latest/youtube-dl -o /usr/local/bin/youtube-dl
-RUN chmod a+rx /usr/local/bin/youtube-dl
+WORKDIR /nadekoBot/src/NadekoBot
+RUN set -ex; \
+    dotnet restore; \
+    dotnet build -c Release; \
+    dotnet publish -c Release -o /app
 
-RUN git clone -b 1.9 --recursive --depth 1 https://gitlab.com/Kwoth/nadekobot.git
+WORKDIR /app
+RUN set -ex; \
+    rm libopus.so libsodium.dll libsodium.so opus.dll; \
+    find . -type f -exec chmod -x {} \;; \
+    rm -R runtimes/win* runtimes/osx* runtimes/linux-*
 
-RUN cd nadekobot && dotnet restore
-RUN cd nadekobot && dotnet build --configuration Release
+FROM microsoft/dotnet:2.1-runtime-alpine AS runtime
+WORKDIR /app
+COPY --from=build /app /app
+RUN set -ex; \
+    echo '@edge http://dl-cdn.alpinelinux.org/alpine/edge/main' >> /etc/apk/repositories; \
+    echo '@edge http://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories; \
+    apk add --no-cache \
+        ffmpeg \
+        youtube-dl@edge \
+        libsodium \
+        opus \
+        rsync; \
+    adduser -D nadeko; \
+    chown nadeko /app; \
+    chmod u+w /app; \
+    mv /app/data /app/data-default; \
+    install -d -o nadeko -g nadeko -m 755 /app/data;
 
-ADD run.sh /opt/
+# workaround for the runtime to find the native libs loaded through DllImport
+RUN set -ex; \
+    ln -s /usr/lib/libopus.so.0 /app/libopus.so; \
+    ln -s /usr/lib/libsodium.so.23 /app/libsodium.so
 
-CMD ["sh","/opt/run.sh"]
+VOLUME [ "/app/data" ]
+USER nadeko
+
+COPY docker-entrypoint.sh /
+CMD ["/docker-entrypoint.sh"]
