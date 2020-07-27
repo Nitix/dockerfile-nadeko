@@ -4,7 +4,7 @@ RUN git clone https://gitlab.com/Kwoth/nadekobot.git
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-alpine AS build
 
-COPY --from=git /nadekobot /nadekobot
+COPY --from=git /git/nadekobot /nadekobot
 
 WORKDIR /nadekobot/src/NadekoBot
 RUN set -ex; \
