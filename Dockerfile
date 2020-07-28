@@ -38,12 +38,13 @@ RUN set -ex; \
     install -d -o nadeko -g nadeko -m 755 /app/data;
 
 # workaround for the runtime to find the native libs loaded through DllImport
-RUN set -ex; \
+COPY docker-entrypoint.sh /
+
+RUN chmod +x /docker-entrypoint.sh; \
+    set -ex; \
     ln -s /usr/lib/libopus.so.0 /app/libopus.so; \
     ln -s /usr/lib/libsodium.so.23 /app/libsodium.so
 
 VOLUME [ "/app/data" ]
 USER nadeko
-
-COPY docker-entrypoint.sh /
 CMD ["/docker-entrypoint.sh"]
