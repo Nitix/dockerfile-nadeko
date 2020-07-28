@@ -16,7 +16,8 @@ WORKDIR /app
 RUN set -ex; \
     rm libopus.so libsodium.dll libsodium.so opus.dll; \
     find . -type f -exec chmod -x {} \;; \
-     rm -R runtimes/win* runtimes/osx*
+     rm -R runtimes/win* runtimes/osx* runtimes/linux-*; \
+     ln -s alpine-x64 runtimes/linux-x64
      
 FROM mcr.microsoft.com/dotnet/core/runtime:3.1-alpine AS runtime
 WORKDIR /app
